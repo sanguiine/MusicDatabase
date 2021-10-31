@@ -35,7 +35,7 @@ Project was created with:
 
 
 ## Database
-![Site design](./Images/database.png)
+![Database schema](./Images/database.png)
 
 
 ## Setup
