@@ -1,0 +1,129 @@
+﻿<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="~/img/icon.png" type="image/png">
+    @Styles.Render("~/Content/css")
+    <meta name="keywords" content="bootstrap, .net, database, music">
+    <meta name="description" content="Internetowa baza danych reprezentująca dyskografie wykonawców muzycznych, wykonana z wykorzystaniem technologii .NET.">
+    <meta name="author" content="Monika Płóciennik">
+    <title>MusicDB - admin</title>
+</head>
+<body class="bgcolor">
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 header-height border-bottom border-primary">
+        <h5 class="dlink text-white px-3 pt-2 text-uppercase" href="#">Panel administratora</h5>
+        <button class="navbar-toggler position-absolute d-md-none collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-4 col-lg-3 col-xl-2 d-md-block bg-dark sidebar collapse border-end border-primary">
+                <div class="position-sticky pt-3">
+                    <div class="px-3 pb-4 pt-2">
+                        @if (Request.IsAuthenticated)
+                        {
+                            if (Session["userAvatar"] != null)
+                            {
+                                var avatar = string.Format("data:image/jpeg;base64,{0}", Session["userAvatar"]);
+                                <img src="@avatar" class="rounded-circle me-2" alt="usericon" width="60px" align="left">
+                            }
+                            else
+                            {
+                                <img src="~/img/user.png" class="rounded-circle me-2" alt="usericon" width="60px" align="left">
+                            }
+
+                            if (Session["userName"] != null)
+                            {
+                                <p class="m-0 pt-2 text-white">@Session["userName"]</p>
+                            }
+                            <p class="font12 text-muted m-0">@User.Identity.Name</p>
+                        }
+                    </div>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Zarządzanie</span>
+                    </h6>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "Index" ? "active" : "") " aria-current="page" href="@Url.Action("Index", "Admin")">
+                                <i class="bi bi-collection pe-3"></i>
+                                Panel
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "Users" ? "active" : "") " href="@Url.Action("Users", "Admin")">
+                                <i class="bi bi-people pe-3"></i>
+                                Użytkownicy
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "Artists" ? "active" : "") " href="@Url.Action("Artists", "Admin")">
+                                <i class="bi bi-music-note-list pe-3"></i>
+                                Wykonawcy
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "Albums" ? "active" : "") " href="@Url.Action("Albums", "Admin")">
+                                <i class="bi bi-disc pe-3"></i>
+                                Albumy
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "Genres" ? "active" : "") " href="@Url.Action("Genres", "Admin")">
+                                <i class="bi bi-music-note pe-3"></i>
+                                Gatunki
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "Comments" ? "active" : "") " href="@Url.Action("Comments", "Admin")">
+                                <i class="bi bi-chat-left-dots pe-3"></i>
+                                Komentarze
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(ViewBag.Current == "Reviews" ? "active" : "") " href="@Url.Action("Reviews", "Admin")">
+                                <i class="bi bi-vector-pen pe-3"></i>
+                                Recenzje
+                            </a>
+                        </li>
+                    </ul>
+
+                    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+                        <span>Inne</span>
+                    </h6>
+                    <ul class="nav flex-column mb-2">
+                        <li class="nav-item">
+                            <a class="nav-link" href="@Url.Action("Index", "Home")">
+                                <i class="bi bi-house pe-3"></i>
+                                Strona główna
+                            </a>
+                        </li>
+                        @if (Request.IsAuthenticated)
+                        {
+                            using (Html.BeginForm("Logout", "Users", FormMethod.Post, new { id = "logoutForm" }))
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" href="javascript:document.getElementById('logoutForm').submit()">
+                                        <i class="bi bi-box-arrow-right pe-3"></i>
+                                        Wyloguj
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                    </ul>
+                </div>
+            </nav>
+
+            @RenderBody()
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+    @RenderSection("scripts", required: false)
+</body>
+</html>

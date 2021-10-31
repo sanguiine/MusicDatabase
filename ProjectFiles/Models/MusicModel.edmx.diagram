@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="65b31fa9985242d29b6cfcc33b8ec5b5" Name="Diagram1" ZoomLevel="64">
+        <EntityTypeShape EntityType="MusicDBModel.Album" Width="1.5" PointX="0.75" PointY="10" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Artist" Width="1.5" PointX="3" PointY="7.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Comment" Width="1.5" PointX="6" PointY="14.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Favourite" Width="1.5" PointX="5.25" PointY="7.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Genre" Width="1.5" PointX="3" PointY="14.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Musician" Width="1.5" PointX="5.25" PointY="10.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Rating" Width="1.5" PointX="8" PointY="10.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Review" Width="1.5" PointX="8" PointY="6.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.sysdiagram" Width="1.5" PointX="5.375" PointY="0.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.Track" Width="1.5" PointX="3" PointY="22.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="MusicDBModel.User" Width="1.5" PointX="5.75" PointY="3" IsExpanded="true" />
+        <AssociationConnector Association="MusicDBModel.FK_Comments_Albums" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Ratings_Albums" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Reviews_Albums" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Tracks_Albums" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Favourites_Artists" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Musicians_Artists" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Comments_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Favourites_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Ratings_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.FK_Reviews_Users" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.AlbumArtists" ManuallyRouted="false" />
+        <AssociationConnector Association="MusicDBModel.AlbumGenres" ManuallyRouted="false" />
+        <EntityTypeShape EntityType="MusicDBModel.Top100Albums" Width="1.5" PointX="0.75" PointY="3.75" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

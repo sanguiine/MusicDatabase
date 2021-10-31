@@ -1,0 +1,14 @@
+﻿@model MusicDB.Models.User
+
+<section class="p-0 m-0 bgcolor w-100">
+    <div class="container py-5 px-0">
+        <h1 class="display-5 mx-2 text-center text-white">Ustawienia</h1>
+        <div class="maxw bg-dark text-light rounded mx-auto p-5 text-center my-5">
+            <form class="pt-3 pb-5 px-3">
+                @Html.ActionLink("Zmień dane konta", "DetailsSettings", "Users", new { area = "" }, new { @class = "btn btn-light subtitle mt-4 pt-3" })
+                @Html.ActionLink("Zmień hasło", "PasswordSettings", "Users", new { area = "" }, new { @class = "btn btn-light subtitle mt-4 pt-3" })
+                @Html.ActionLink("Zmień avatar", "AvatarSettings", "Users", new { area = "" }, new { @class = "btn btn-light subtitle mt-4 pt-3" })
+            </form>
+        </div>
+    </div>
+</section>

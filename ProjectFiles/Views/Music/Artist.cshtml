@@ -1,0 +1,132 @@
+﻿@model MusicDB.Models.Artist
+
+<section class="p-0 m-0 bgcolor text-light w-100">
+    <div class="container px-3 pt-5">
+        <div class="pb-2">
+
+            <div class="pt-3">
+                <h1 class="display-5 mx-2 ">
+                    @Html.DisplayFor(model => model.Name)
+                    @if (Request.IsAuthenticated & Session["userID"] != null)
+                    {
+                        if (ViewBag.Avaliable.Equals("true"))
+                        {
+                            using (Html.BeginForm("ArtistFav", "Music", new { id = Model.ArtistID }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" value="ArtistFav" class="btn btn-secondary text-light"><i class="bi bi-heart text-light" aria-hidden="true"></i> Dodaj do ulubionych</button>
+                            }
+                        }
+                        else
+                        {
+                            using (Html.BeginForm("ArtistUnFav", "Music", new { id = Model.ArtistID }, FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                <button type="submit" value="ArtistUnFav" class="btn btn-secondary text-light"><i class="bi bi-heart-fill text-light" aria-hidden="true"></i> Usuń z ulubionych</button>
+                            }
+                        }
+
+                    }
+                </h1>
+            </div>
+
+            <div class="row pb-5">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="bg-dark text-light rounded mx-auto px-5 pb-5 mt-5">
+                        <div class="row">
+                            <div class="col-lg-5 col-md-8 col-sm-12 pt-5">
+                                <div class="w-100">
+                                    <h5 class="subtitle text-white">Biografia</h5>
+                                    <p class="text-muted barlow mb-4">
+                                        @Html.DisplayFor(model => model.Bio)
+                                    </p>
+
+                                    <h5 class="subtitle text-white">Skład zespołu</h5>
+                                    @foreach (var musician in Model.Musicians)
+                                    {
+                                        <p class="text-muted barlow p-0 m-0">
+                                            @Html.DisplayFor(model => musician.Name) - <small>@Html.DisplayFor(model => musician.Role)</small>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-lg-2 col-md-4 col-sm-12 pt-5">
+                                <div class="w-100">
+                                    <h5 class="subtitle text-white">Data założenia</h5>
+                                    <p class="text-muted mb-4 barlow">
+                                        @Html.DisplayFor(model => model.BeginDate)
+                                    </p>
+                                    @if (Model.EndDate != null)
+                                    {
+                                        <h5 class="subtitle text-white">Data rozwiązania</h5>
+                                        <p class="text-muted mb-4 barlow">
+
+                                            @Html.DisplayFor(model => model.EndDate)
+                                        </p>
+                                    }
+                                    <h5 class="subtitle text-white">Pochodzenie</h5>
+                                    <p class="text-muted barlow">
+                                        @Html.DisplayFor(model => model.Country)
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="col-lg-5 col-md-12 col-sm-12 pt-5">
+                                @{
+                                    if (Model.Photo != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(Model.Photo);
+                                        var photo = string.Format("data:image/jpeg;base64,{0}", base64);
+                                        <img src="@photo" alt="artist" width="100%">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/artist.jpg" alt="artist" width="100%">
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="text-light rounded mx-auto pt-5 px-5">
+                        <p class="subtitle pb-3">Dyskografia</p>
+                        <table class="table table-dark barlow">
+                            <tbody>
+                                @foreach (var album in Model.Albums.OrderBy(i => i.ReleaseDate))
+                                {
+                                    <tr>
+                                        <td class="col-1">
+                                            @{
+                                                if (album.Cover != null)
+                                                {
+                                                    var base64 = Convert.ToBase64String(album.Cover);
+                                                    var cover = string.Format("data:image/jpeg;base64,{0}", base64);
+                                                    <img src="@cover" alt="album" width="50px">
+                                                }
+                                                else
+                                                {
+                                                    <img src="~/img/album.png" alt="album" width="50px">
+                                                }
+                                            }
+                                        </td>
+                                        <td class="col-7">
+                                            @Html.ActionLink(album.Title, "Album", "Music", new { id = album.AlbumID }, new { @class = "link-disabled" })
+                                        </td>
+                                        <td class="col-2 text-center">
+                                            @Html.DisplayFor(model => album.ReleaseDate)
+                                        </td>
+                                        <td class="col-2 text-center">
+                                            @Html.DisplayFor(model => album.Type)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>

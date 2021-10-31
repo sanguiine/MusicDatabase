@@ -1,0 +1,247 @@
+﻿@model MusicDB.Models.User
+
+<section class="p-0 m-0 bgcolor text-light w-100">
+    <div class="container px-3 pt-5">
+        <div class="pb-2">
+            <div class="row pb-5">
+                <div class="col-lg-12 col-md-12 col-sm-12 text-center">
+                    <div class="bg-dark text-light rounded mx-auto px-5 pb-5">
+                        <div class="pt-5">
+                            @{
+                                if (Model.Avatar != null)
+                                {
+                                    var base64 = Convert.ToBase64String(Model.Avatar);
+                                    var avatar = string.Format("data:image/jpeg;base64,{0}", base64);
+                                    <img class="rounded-circle border border-white border-3" src="@avatar" alt="" width="140" height="140">
+                                }
+                                else
+                                {
+                                    <img class="rounded-circle border border-white border-3" src="~/img/user.png" alt="" width="140" height="140">
+                                }
+                            }
+                            <h1 class="lead title mx-2 pt-3">@Html.DisplayFor(model => model.Name)</h1>
+                            <p class="text-muted barlow m-0">@Html.DisplayFor(model => model.Birthdate)</p>
+                        </div>
+
+                        <nav class="pt-5">
+                            <div class="nav nav-tabs justify-content-center" id="nav-tab" role="tablist">
+                                <a class="nav-link active nav-link2" id="nav-ratings-tab" data-bs-toggle="tab" href="#nav-ratings" role="tab" aria-controls="nav-ratings" aria-selected="true">Oceny</a>
+                                <a class="nav-link nav-link2" id="nav-fav-tab" data-bs-toggle="tab" href="#nav-fav" role="tab" aria-controls="nav-fav" aria-selected="false">Ulubione zespoły</a>
+                                <a class="nav-link nav-link2" id="nav-reviews-tab" data-bs-toggle="tab" href="#nav-reviews" role="tab" aria-controls="nav-reviews" aria-selected="false">Recenzje</a>
+                            </div>
+                        </nav>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-ratings" role="tabpanel" aria-labelledby="nav-ratings-tab">
+                        <div class="text-light rounded mx-auto pt-3">
+                            <table id="account" class="table table-dark table-style table-sm barlow">
+                                <thead class="table-borderless">
+                                    <tr>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var album in Model.Ratings.OrderByDescending(s => s.Date))
+                                    {
+                                    <tr>
+                                        <td class="col-lg-1 col-2 py-3">
+                                            @{
+                                                if (album.Album.Cover != null)
+                                                {
+                                                    var base64 = Convert.ToBase64String(album.Album.Cover);
+                                                    var photo = string.Format("data:image/jpeg;base64,{0}", base64);
+                                                    <img src="@photo" alt="album" width="100%">
+                                                }
+                                                else
+                                                {
+                                                    <img src="~/img/album.png" alt="album" width="100%">
+                                                }
+                                            }
+                                        </td>
+                                        <td class="col-lg-6 col-4 py-3 align-middle">
+                                            <h1 class="lead title barlow">
+                                                @Html.ActionLink(album.Album.Title, "Album", "Music", new { id = album.AlbumID }, new { @class = "link-disabled" })
+                                            </h1>
+                                            @foreach (var artist in album.Album.Artists)
+                                            {
+                                                <h1 class="lead artist text-muted barlow">
+                                                    @Html.ActionLink(artist.Name, "Artist", "Music", new { id = artist.ArtistID }, new { @class = "link-disabled" })
+                                                </h1>
+                                            }
+                                        </td>
+                                        <td class="col-lg-5 col-5 px-3 py-3 align-middle text-end">
+                                            <h1 class="lead rate barlow text-end">
+                                                <i class="bi bi-star text-warning" aria-hidden="true"></i>
+                                                @Html.DisplayFor(model => album.Rating1)
+                                            </h1>
+                                        </td>
+                                        
+                                        <td class="col-lg-1 col-1 py-3 align-middle">
+                                            @if (Request.IsAuthenticated & (Session["userID"] != null))
+                                            {
+                                                if (int.Parse(Session["userID"].ToString()) == album.UserID)
+                                                {
+                                                    using (Html.BeginForm("DeleteRate", "Users", new { id = album.RatingID }, FormMethod.Post))
+                                                    {
+                                                        @Html.AntiForgeryToken()
+
+                                                        <button type="submit" value="DeleteRate" class="btn btn-dark ms-2"><i class="bi bi-trash"></i></button>
+                                                    }
+                                                }
+                                            }
+
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-fav" role="tabpanel" aria-labelledby="nav-fav-tab">
+                        <div class="text-light rounded mx-auto pt-2 px-2">
+                            <div class="row mt-4">
+                                @foreach (var artist in Model.Favourites.OrderByDescending(s => s.Date))
+                                {
+                                    <div class="col-lg-3 col-md-4 col-sm-6 col-6 pb-4">
+                                        @{
+                                            if (artist.Artist.Photo != null)
+                                            {
+                                                var base64 = Convert.ToBase64String(artist.Artist.Photo);
+                                                var imagesrc = string.Format("data:image/jpeg;base64,{0}", base64);
+                                                <img src="@imagesrc" alt="album" width="100%">
+                                            }
+                                            else
+                                            {
+                                                <img src="~/img/artist.jpg" alt="album" width="100%">
+                                            }
+                                        }
+                                    <p class="mt-2 mb-0 mx-2 lead artist barlow">
+                                        @Html.ActionLink(artist.Artist.Name, "Artist", "Music", new { id = artist.ArtistID }, new { @class = "link-disabled" })
+                                        @if (Request.IsAuthenticated & (Session["userID"] != null))
+                                        {
+                                            if (int.Parse(Session["userID"].ToString()) == artist.UserID)
+                                            {
+                                                using (Html.BeginForm("DeleteFav", "Users", new { id = artist.FavouriteID }, FormMethod.Post))
+                                                {
+                                                    @Html.AntiForgeryToken()
+
+                                                    <button type="submit" value="DeleteFav" class="btn btn-dark ms-2"><i class="bi bi-trash"></i></button>
+                                                }
+                                            }
+                                        }
+                                    </p>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="nav-reviews" role="tabpanel" aria-labelledby="nav-reviews-tab">
+                        <div class="text-light rounded mx-auto pt-3">
+                            <table id="account2" class="table table-dark barlow table-style table-sm">
+                                <thead class="">
+                                    <tr>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                        <th class=""></th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var album in Model.Reviews.OrderByDescending(s => s.Date))
+                                    {
+                                        <tr>
+                                            <td class="col-lg-2 col-2 py-3 align-middle text-center" >
+                                                @{
+                                                    if (album.Album.Cover != null)
+                                                    {
+                                                        var base64 = Convert.ToBase64String(album.Album.Cover);
+                                                        var photo = string.Format("data:image/jpeg;base64,{0}", base64);
+                                                        <img src="@photo" alt="album" width="100%">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img src="~/img/album.png" alt="album" width="100%">
+                                                    }
+                                                }
+                                                <h1 class="lead artist barlow pt-2">
+                                                    @Html.ActionLink(album.Album.Title, "Album", "Music", new { id = album.AlbumID }, new { @class = "link-disabled" })
+                                                </h1>
+                                                @foreach (var artist in album.Album.Artists)
+                                                {
+                                                    <h1 class="lead genre text-muted barlow">
+                                                        @Html.ActionLink(artist.Name, "Artist", "Music", new { id = artist.ArtistID }, new { @class = "link-disabled" })
+                                                    </h1>
+                                                }
+                                            </td>
+                                            <td class="col-lg-9 col-9 px-3 py-3">
+                                                <h1 class="lead barlow text-muted">
+                                                    @album.Review1
+                                                </h1>
+                                            </td>
+                                            <td class="col-lg-1 col-1 px-3 py-3">
+                                                @if (Request.IsAuthenticated & (Session["userID"] != null))
+                                                {
+                                                    if (int.Parse(Session["userID"].ToString()) == album.UserID)
+                                                    {
+                                                        using (Html.BeginForm("DeleteReview", "Users", new { id = album.ReviewID }, FormMethod.Post))
+                                                        {
+                                                            @Html.AntiForgeryToken()
+
+                                                            <button type="submit" value="DeleteReview" class="btn btn-dark ms-2"><i class="bi bi-trash"></i></button>
+                                                        }
+                                                    }
+                                                }
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $('#account').DataTable({
+            "ordering": false,
+            "oLanguage": {
+                "sSearch": "Szukaj _INPUT_",
+                "sEmptyTable": "Brak ocen.",
+                "sInfo": "",
+                "sLengthMenu": "",
+                "oPaginate": {
+                    "sFirst": "Pierwsza strona",
+                    "sPrevious": "<",
+                    "sNext": ">",
+                    "sLast": "Ostatnia strona"
+                }
+            }
+        });
+
+        $('#account2').DataTable({
+            "ordering": false,
+            "oLanguage": {
+                "sSearch": "Szukaj _INPUT_",
+                "sEmptyTable": "Brak recenzji.",
+                "sInfo": "",
+                "sLengthMenu": "",
+                "oPaginate": {
+                    "sFirst": "Pierwsza strona",
+                    "sPrevious": "<",
+                    "sNext": ">",
+                    "sLast": "Ostatnia strona"
+                }
+            }
+        });
+    </script>
+}

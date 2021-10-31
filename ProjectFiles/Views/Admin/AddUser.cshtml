@@ -1,0 +1,72 @@
+﻿@model MusicDB.Models.User
+
+@{
+    Layout = "~/Views/Shared/_Layout - admin.cshtml";
+}
+
+
+<div class="panel-name col-md-8 ms-sm-auto col-lg-9 col-xl-10 bg-dark border-bottom border-primary mx-0 pt-3 pb-2 px-3 mb-3">
+    <h5 class="text-gray">Użytkownicy</h5>
+</div>
+
+<div class="col-md-8 ms-sm-auto col-lg-9 col-xl-10 mt-1 barlow">
+    <div class="row px-3 pb-3">
+        <div class="col-lg-6 col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4">
+                <p class="sidebar-heading m-0 pt-0 px-2 pb-3">dodaj</p>
+                @using (Html.BeginForm("AddUser", "Admin", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <form>
+                        @Html.ValidationSummary(true, "", new { @class = "text-danger small" })
+                        <div class="mb-3">
+                            <label for="inputEmail2" class="form-label">Email</label>
+                            @Html.EditorFor(model => model.Email, new { htmlAttributes = new { @class = "form-control form-style" } })
+                            @Html.ValidationMessageFor(model => model.Email, "", new { @class = "text-danger small" })
+                            @Html.ValidationMessage("EmailExists", "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputName2" class="form-label">Imię</label>
+                            @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control form-style" } })
+                            @Html.ValidationMessageFor(model => model.Name, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputPassword2" class="form-label">Hasło</label>
+                            <div class="input-group">
+                                @Html.EditorFor(model => model.Password, new { htmlAttributes = new { @class = "form-control form-style pwd", @type = "password" } })
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default reveal form-style border-dark" type="button"><i class="bi bi-eye-slash" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.Password, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputDate2" class="form-label">Data urodzenia</label>
+                            @Html.EditorFor(model => model.Birthdate, new { htmlAttributes = new { @class = "form-control form-style", onfocus = "(this.type='date')" } })
+                            @Html.ValidationMessageFor(model => model.Birthdate, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputType2" class="form-label">Typ konta</label>
+                            @{
+                                var listItems = new List<SelectListItem>()
+                                                        {
+                                    new SelectListItem {Text = "admin",   Value = "admin"},
+                                    new SelectListItem {Text = "user", Value = "user"}
+                                };
+
+                                @Html.DropDownListFor(model => model.Type, listItems, new { @class = "form-select form-style" })
+                            }
+                            @Html.ValidationMessageFor(model => model.Type, "", new { @class = "text-danger small" })
+                        </div>
+                        <div class="mb-3">
+                            <label for="inputAvatar2" class="form-label">Avatar</label>
+                            <input class="form-control form-style" type="file" name="postedFile" accept=".png, .jpg, .jpeg" id="formFile">
+                        </div>
+                        <button type="submit" value="AddUser" class="btn btn-primary">Dodaj</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

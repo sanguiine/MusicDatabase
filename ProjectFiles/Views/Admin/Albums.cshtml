@@ -1,0 +1,83 @@
+﻿@model IEnumerable<MusicDB.Models.Album>
+
+@{
+    Layout = "~/Views/Shared/_Layout - admin.cshtml";
+}
+
+<div class="panel-name col-md-8 ms-sm-auto col-lg-9 col-xl-10 bg-dark border-bottom border-primary mx-0 pt-3 pb-2 px-3 mb-3">
+    <h5 class="text-gray">Albumy</h5>
+</div>
+
+<div class="col-md-8 ms-sm-auto col-lg-9 col-xl-10 mt-1 barlow">
+    <div class="row px-3 pb-3">
+        <div class="col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4">
+
+                <p class="sidebar-heading m-0 pt-0 px-2 pb-4">lista</p>
+
+                @Html.ActionLink("Dodaj nowy album", "AddAlbum", new { area = "" }, new { @class = "btn btn-outline-light" })
+
+                <div class="table-responsive pt-4">
+                    <table id="example" class="table table-dark table-style table-sm">
+                        <thead class="text-gray">
+                            <tr>
+                                <th class="col-1">#</th>
+                                <th class="col-1">Okładka</th>
+                                <th class="col-2">Tytuł</th>
+                                <th class="col-1">Wykonawcy</th>
+                                <th class="col-1">Data wydania</th>
+                                <th class="col-1">Typ</th>
+                                <th class="col-2">Gatunki</th>
+                                <th class="col-4">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                            <tr>
+                                <td>@item.AlbumID</td>
+                                <td>
+                                    @if (item.Cover != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(item.Cover);
+                                        var cover = string.Format("data:image/jpeg;base64,{0}", base64);
+                                        <img src="@cover" alt="album" height="80px">
+                                    }
+                                </td>
+                                <td>@item.Title</td>
+                                <td>
+                                    @foreach (var artist in item.Artists)
+                                    {
+                                        @artist.Name
+                                        <br />
+                                    }
+                                </td>
+                                <td>@Html.DisplayFor(model => item.ReleaseDate)</td>
+                                <td>@item.Type</td>
+                                <td>
+                                    @foreach (var genre in item.Genres)
+                                    {
+                                        @genre.Name
+                                        <br />
+                                    }
+                                </td>
+                                <td>
+                                    @using (Html.BeginForm("DeleteAlbum", "Admin", new { id = item.AlbumID }, FormMethod.Post, new { style = "display: inline" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" value="DeleteAlbum" class="btn mb-1 btn-primary">Usuń</button>
+                                    }
+                                    @Html.ActionLink("Edytuj", "EditAlbum", new { id = item.AlbumID }, new { @class = "btn mb-1 btn-primary" })
+                                    @Html.ActionLink("Edytuj utwory", "AlbumTracks", new { id = item.AlbumID }, new { @class = "btn mb-1 btn-primary" })
+                                    @Html.ActionLink("Edytuj wykonawców", "AlbumArtists", new { id = item.AlbumID }, new { @class = "btn mb-1 btn-primary" })
+                                    @Html.ActionLink("Edytuj gatunki", "AlbumGenres", new { id = item.AlbumID }, new { @class = "btn mb-1 btn-primary" })
+                                </td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

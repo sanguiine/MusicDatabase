@@ -1,0 +1,49 @@
+﻿@model IEnumerable<MusicDB.Models.Genre>
+
+@{
+    Layout = "~/Views/Shared/_Layout - admin.cshtml";
+}
+
+<div class="panel-name col-md-8 ms-sm-auto col-lg-9 col-xl-10 bg-dark border-bottom border-primary mx-0 pt-3 pb-2 px-3 mb-3">
+    <h5 class="text-gray">Albumy / @ViewBag.Album</h5>
+</div>
+
+<div class="col-md-8 ms-sm-auto col-lg-9 col-xl-10 mt-1 barlow">
+    <div class="row px-3 pb-3">
+        <div class="col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4">
+                <p class="sidebar-heading m-0 pt-0 px-2 pb-4">Gatunki</p>
+
+                @Html.ActionLink("Dodaj nowy gatunek", "AddAlbumGenre", new { id = ViewBag.AlbumID }, new { @class = "btn btn-outline-light" })
+
+                <div class="table-responsive pt-4">
+                    <table class="table table-dark table-style table-sm">
+                        <thead class="text-gray">
+                            <tr>
+                                <th class="col-1">#</th>
+                                <th class="col-10">Nazwa</th>
+                                <th class="col-1">Akcje</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var item in Model)
+                            {
+                                <tr>
+                                    <td>@item.GenreID</td>
+                                    <td>@item.Name</td>
+                                    <td>
+                                        @using (Html.BeginForm("DeleteAlbumGenre", "Admin", new { id = item.GenreID, albumID = ViewBag.AlbumID }, FormMethod.Post, new { style = "display: inline" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" value="DeleteAlbumGenre" class="btn btn-primary">Usuń</button>
+                                        }
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

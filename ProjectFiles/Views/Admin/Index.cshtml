@@ -1,0 +1,119 @@
+﻿@model IEnumerable<MusicDB.Models.Top>
+
+@{
+    Layout = "~/Views/Shared/_Layout - admin.cshtml";
+}
+
+<div class="navbar panel-name col-md-8 ms-sm-auto col-lg-9 col-xl-10 bg-dark border-bottom border-primary mx-0 pt-3 pb-2 px-3 mb-3 flex-md-nowrap">
+    <h5 class="text-gray">Panel</h5>
+</div>
+
+<div class="col-md-8 ms-sm-auto col-lg-9 col-xl-10 mt-1 barlow">
+    <div class="row px-3 pb-3">
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4 border-bottom">
+                <div class="row">
+                    <div class="col-3 text-center">
+                        <i class="far fa-user fa-3x text-muted"></i>
+                    </div>
+                    <div class="col-9">
+                        <h2 class="m-0 py-0 px-2 text-white">@ViewBag.UsersCount</h2>
+                        <p class="sidebar-heading m-0 py-0 px-2">użytkownicy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4 border-bottom">
+                <div class="row">
+                    <div class="col-3 text-center">
+                        <i class="far fa-star fa-3x text-muted"></i>
+                    </div>
+                    <div class="col-9">
+                        <h2 class="m-0 py-0 px-2 text-white">@ViewBag.RatingsCount</h2>
+                        <p class="sidebar-heading m-0 py-0 px-2">oceny</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4 border-bottom">
+                <div class="row">
+                    <div class="col-3 text-center">
+                        <i class="far fa-comment-alt fa-3x text-muted"></i>
+                    </div>
+                    <div class="col-9">
+                        <h2 class="m-0 py-0 px-2 text-white">@ViewBag.CommentsCount</h2>
+                        <p class="sidebar-heading m-0 py-0 px-2">komentarze</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4 border-bottom">
+                <div class="row">
+                    <div class="col-3 text-center">
+                        <i class="far fa-edit fa-3x text-muted"></i>
+                    </div>
+                    <div class="col-9">
+                        <h2 class="m-0 py-0 px-2 text-white">@ViewBag.ReviewsCount</h2>
+                        <p class="sidebar-heading m-0 py-0 px-2">recenzje</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4">
+
+                <h5 class="text-gray">Top 10</h5>
+                <div class="table-responsive">
+                    <table class="table table-dark table-style table-sm">
+                        <thead class="text-gray">
+                            <tr>
+                                <th class="col-1">#</th>
+                                <th class="col-1">Okładka</th>
+                                <th class="col-3">Wykonawca</th>
+                                <th class="col-6">Tytuł</th>
+                                <th class="col-1">Średnia</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @{
+                                var i = 1;
+                                foreach (var item in Model)
+                                {
+                                    <tr>
+                                        <td>@i</td>
+                                        <td>
+                                            @if (item.Cover != null)
+                                            {
+                                            var base64 = Convert.ToBase64String(item.Cover);
+                                            var cover = string.Format("data:image/jpeg;base64,{0}", base64);
+                                            <img src="@cover" alt="album" width="40px">
+                                            }
+                                            else
+                                            {
+                                            <img src="~/img/album.png" alt="album" width="40px">
+                                            }
+                                        </td>
+                                        <td>@item.Artists.FirstOrDefault().Name</td>
+                                        <td>@item.Title</td>
+                                        <td>
+                                            <i class="bi bi-star text-warning" aria-hidden="true"></i>
+                                            @item.Average
+                                        </td>
+                                    </tr>
+                                    i++;
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

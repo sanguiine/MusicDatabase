@@ -1,0 +1,95 @@
+﻿@model IEnumerable<MusicDB.Models.Top>
+
+<section class="p-0 m-0 bgcolor text-light w-100">
+    <div class="container px-3 pt-5 pb-5">
+        <div class="pb-2">
+            <h1 class="display-5 mx-2 text-center">Top 100 albumów</h1>
+
+            <div class="maxw2 bg-dark text-light rounded mx-auto p-5 my-5">
+                @using (Html.BeginForm("Ranking", "Music", FormMethod.Get))
+                {
+                    <form class="py-3">
+                        <div class="row">
+                            <div class="col form-group">
+                                <p class="subtitle">Gatunek</p>
+                                @Html.DropDownList("GenreID", (SelectList)ViewBag.GenreID, "Wybierz gatunek", new { @class = "form-select select-light barlow" })
+
+                            </div>
+                            <div class="col form-group">
+                                <p class="subtitle">Rok</p>
+                                @Html.DropDownList("YearID", (SelectList)ViewBag.Year, "Wybierz rok", new { @class = "form-select select-light barlow" })
+                            </div>
+                        </div>
+                        <button type="submit" value="Search" class="btn btn-light subtitle mt-5">Filtruj</button>
+                    </form>
+                }
+            </div>
+        </div>
+
+        @{
+            if (Model != null)
+            {
+
+                var i = 1;
+                foreach (var item in Model)
+                {
+                    <div class="pb-4">
+                        <div class="row my-4 border border-dark py-3">
+                            <div class="col-lg-1 col-md-1 d-none d-md-block">
+                                <h1 class="display-5 mx-2">@i</h1>
+                            </div>
+                            <div class="col-lg-2 col-md-2 col-sm-12 col-12">
+                                @{
+                                    if (item.Cover != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(item.Cover);
+                                        var cover = string.Format("data:image/jpeg;base64,{0}", base64);
+                                        <img src="@cover" alt="album" width="100%">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/album.png" alt="album" width="100%">
+                                    }
+                                }
+                            </div>
+                            <div class="col-sm-1 col-1 d-md-none mt-1 text-center">
+                                <h1 class="display-5 mx-2 barlow">@i</h1>
+                            </div>
+                            <div class="col-lg-7 col-md-6 col-sm-11 col-11 my-2">
+                                <h1 class="lead title barlow">
+                                    @Html.ActionLink(item.Title, "Album", "Music", new { id = item.AlbumID }, new { @class = "link-disabled" })
+                                </h1>
+                                @foreach (var artist in item.Artists)
+                                {
+                                    <h1 class="lead artist barlow">
+                                        @Html.ActionLink(artist.Name, "Artist", "Music", new { id = artist.ArtistID }, new { @class = "link-disabled" })
+                                    </h1>
+                                }
+                                <p class="pt-2 mb-1 text-muted barlow">
+                                    @Html.DisplayFor(model => item.ReleaseDate)
+                                </p>
+
+                                @foreach (var genre in item.Genres)
+                                {
+                                    <p class="text-muted genre barlow p-0 m-0">
+                                        @genre.Name
+                                    </p>
+                                }
+
+                            </div>
+                            <div class="col-lg-2 col-md-3 col-sm-12 col-12 text-center">
+                                <p class="mt-2 mb-0 mx-2">
+                                    <h1 class="lead rate barlow">
+                                        <i class="bi bi-star text-warning" aria-hidden="true"></i>
+                                        @item.Average
+                                    </h1>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    i = i + 1;
+                }
+            }
+        }
+    </div>
+</section>

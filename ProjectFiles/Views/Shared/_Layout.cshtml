@@ -1,0 +1,163 @@
+﻿<!doctype html>
+<html lang="pl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="icon" href="~/img/icon.png" type="image/png">
+    @Styles.Render("~/Content/css")
+    <meta name="keywords" content="bootstrap, .net, database, music">
+    <meta name="description" content="Internetowa baza danych reprezentująca dyskografie wykonawców muzycznych, wykonana z wykorzystaniem technologii .NET.">
+    <meta name="author" content="Monika Płóciennik">
+    <title>MusicDB</title>
+</head>
+<body>
+    <div class="d-flex flex-column overflow-hidden min-vh-100">
+        <header class="header">
+            <nav class="navbar navbar-expand-md navbar-dark bg-dark w-100">
+                <a href="#" class="navbar-brand d-block d-md-none mx-3">
+                    <img src="~/img/logo.png" alt="MusicDB" width="100px">
+                </a>
+                <button class="navbar-toggler mx-3" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse m-2 justify-content-md-center text-white" id="navbarSupportedContent">
+                    <ul class="navbar-nav ml-auto">
+                        <li class="nav-item mx-2">
+                            @Html.ActionLink("Strona główna", "Index", "Home", new { area = "" }, new { @class = "nav-link nav-link3" })
+                        </li>
+                        <li class="nav-item mx-2">
+                            @Html.ActionLink("Ranking", "Ranking", "Music", new { area = "" }, new { @class = "nav-link nav-link3" })
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav mx-1">
+                        <li class="nav-item m-0 d-none d-md-block py-0 ps-3 pe-1">
+                            <p class="navbar-brand p-0 m-0">
+                                <img src="~/img/logo.png" alt="MusicDB" width="140px">
+                            </p>
+                        </li>
+                    </ul>
+                    <ul class="navbar-nav mr-auto">
+                        <li class="nav-item mx-2">
+                            @Html.ActionLink("Wyszukiwarka", "Search", "Music", new { area = "" }, new { @class = "nav-link nav-link3" })
+                        </li>
+                        <li class="nav-item dropdown mx-2">
+                            <a href="#" class="nav-link nav-link3 dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                @if (Request.IsAuthenticated)
+                                {
+                                    if (Session["userAvatar"] != null)
+                                    {
+                                        var avatar = string.Format("data:image/jpeg;base64,{0}", Session["userAvatar"]);
+                                        <img src="@avatar" class="rounded-circle border border-1" alt="usericon" width="20px" height="20px">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/user.png" class="rounded-circle border border-1" alt="usericon" width="20px" height="20px">
+                                    }
+                                }
+                                else
+                                {
+                                    <img src="~/img/user.png" class="rounded-circle border border-1" alt="usericon" width="20px" height="20px">
+                                }
+                                Konto
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-dark">
+                                @if (Request.IsAuthenticated)
+                                {
+                                    @Html.ActionLink("Profil", "Account", "Users", new { id = Session["userID"] }, new { @class = "dropdown-item" })
+                                    @Html.ActionLink("Ustawienia", "Settings", "Users", new { area = "" }, new { @class = "dropdown-item" })
+
+                                    using (Html.BeginForm("Logout", "Users", FormMethod.Post, new { id = "logoutForm" }))
+                                    {
+                                        <a class="dropdown-item" href="javascript:document.getElementById('logoutForm').submit()">Wyloguj</a>
+                                    }
+
+                                    if (Session["userType"] != null && Session["userType"].Equals("admin"))
+                                    {
+                                        <div class="dropdown-divider"></div>
+                                        @Html.ActionLink("Panel administratora", "Index", "Admin", new { area = "" }, new { @class = "dropdown-item" })
+                                    }
+                                }
+                                else
+                                {
+                                    @Html.ActionLink("Logowanie", "Login", "Users", new { area = "" }, new { @class = "dropdown-item" })
+                                    @Html.ActionLink("Rejestracja", "Register", "Users", new { area = "" }, new { @class = "dropdown-item" })
+                                }
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+        </header>
+
+        <main role="main" class="flex-grow-1 overflow-auto bgcolor">
+            @RenderBody()
+        </main>
+
+        <footer class="bg-dark text-muted w-100 justify-content-md-center">
+            <div class="container pb-4 pt-1">
+                <div class="row my-4">
+                    <div class="col-lg-3 col-md-5 col-sm-12 me-lg-5 mb-3">
+                        <p class="logo text-white">MusicDB</p>
+                        <small>Internetowa baza danych reprezentująca dyskografie wykonawców muzycznych, wykonana z wykorzystaniem technologii .NET.</small>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-12 px-3 me-1">
+                        <h5 class="mb-3 mt-3 subtitle text-white">Nawigacja</h5>
+                        <ul class="list-unstyled">
+                            <li class="pb-1">
+                                <small>@Html.ActionLink("Strona główna", "Index", "Home", new { area = "" }, new { @class = "link-secondary dlink" })</small>
+                            </li>
+                            <li class="pb-1">
+                                <small>@Html.ActionLink("Ranking", "Ranking", "Music", new { area = "" }, new { @class = "link-secondary dlink" })</small>
+                            </li>
+                            <li class="pb-1">
+                                <small>@Html.ActionLink("Wyszukiwarka", "Search", "Music", new { area = "" }, new { @class = "link-secondary dlink" })</small>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-lg-2 col-md-3 col-sm-12 px-3">
+                        <h5 class="mb-3 mt-3 subtitle text-white">Konto</h5>
+                        <ul class="list-unstyled">
+                            @if (Request.IsAuthenticated)
+                            {
+                                <li class="pb-1">
+                                    <small>@Html.ActionLink("Profil", "Account", "Users", new { id = Session["userID"] }, new { @class = "link-secondary dlink" })</small>
+                                </li>
+                                <li class="pb-1">
+                                    <small>@Html.ActionLink("Ustawienia", "Settings", "Users", new { area = "" }, new { @class = "link-secondary dlink" })</small>
+                                </li>
+                                <li class="pb-1">
+                                    <small>
+                                        @using (Html.BeginForm("Logout", "Users", FormMethod.Post, new { id = "logoutForm" }))
+                                        {
+                                            <a class="link-secondary dlink" href="javascript:document.getElementById('logoutForm').submit()">Wyloguj</a>
+                                        }
+                                    </small>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="pb-1">
+                                    <small>@Html.ActionLink("Logowanie", "Login", "Users", new { area = "" }, new { @class = "link-secondary dlink" })</small>
+                                </li>
+                                <li class="pb-1">
+                                    <small>@Html.ActionLink("Rejestracja", "Register", "Users", new { area = "" }, new { @class = "link-secondary dlink" })</small>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+                <div class="pt-4 border-top border-secondary text-center">
+                    <small class="mb-0">
+                        Copyright &copy;@DateTime.Now.Year MusicDB |  All Rights Reserved
+                    </small>
+                </div>
+            </div>
+        </footer>
+
+        @Scripts.Render("~/bundles/jquery")
+        @Scripts.Render("~/bundles/bootstrap")
+        @RenderSection("scripts", required: false)
+    </div>
+</body>
+</html>

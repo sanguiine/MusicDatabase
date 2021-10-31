@@ -1,0 +1,69 @@
+﻿@model PagedList.IPagedList<MusicDB.Models.Artist>
+@using PagedList.Mvc;
+<link href="~/Content/PagedList.css" rel="stylesheet" type="text/css" />
+
+<section class="p-0 m-0 bgcolor text-light w-100">
+    <div class="container pt-5">
+        <div class="pb-5 text-center">
+            <h1 class="display-5 mx-2 text-center">Wyszukiwarka</h1>
+
+            <div class="row">
+                <form class="pt-5">
+                    <div class="form-group mb-3">
+                        <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio1" autocomplete="off">
+                            @Html.ActionLink("Albumy", "Search", "Music", new { area = "" }, new { @class = "btn btn-secondary", @for = "btnradio1" })
+                            <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" checked>
+                            @Html.ActionLink("Wykonawcy", "SearchArtists", "Music", new { area = "" }, new { @class = "btn btn-secondary", @for = "btnradio2" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="input-group search-field">
+                            @using (Html.BeginForm("Search", "Music", FormMethod.Get))
+                            {
+                                @Html.TextBox("SearchString", ViewBag.CurrentFilter as string, new { @class = "form-control clogin-form", @placeholder = "Szukaj..." })
+                                <span class="input-group-btn">
+                                    <button type="submit" value="Search" class="btn btn-default reveal-style"><i class="bi bi-search" aria-hidden="true"></i></button>
+                                </span>
+                            }
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="pb-5 pt-2">
+            <p class="mx-2 lead">Wyniki</p>
+
+            <div class="row my-4">
+                @foreach (var item in Model)
+                {
+                    <div class="col-lg-2 col-md-3 col-sm-4 col-6 pb-4">
+                        @{
+                            if (item.Photo != null)
+                            {
+                                var base64 = Convert.ToBase64String(item.Photo);
+                                var photo = string.Format("data:image/jpeg;base64,{0}", base64);
+                                <img src="@photo" alt="album" width="100%">
+                            }
+                            else
+                            {
+                                <img src="~/img/artist.jpg" alt="album" width="100%">
+                            }
+                        }
+
+                    <p class="mt-2 mb-0 mx-2 lead artist barlow">
+                        @Html.ActionLink(item.Name, "Artist", "Music", new { id = item.ArtistID }, new { @class = "link-disabled" })
+                    </p>
+                    </div>
+                }
+            </div>
+
+            <div class="text-center link-disabled">
+                Strona @(Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber) z @Model.PageCount
+
+                @Html.PagedListPager(Model, page => Url.Action("Search",
+                    new { page, sortOrder = ViewBag.CurrentSort, currentFilter = ViewBag.CurrentFilter }))
+            </div>
+        </div>
+    </div>
+</section>

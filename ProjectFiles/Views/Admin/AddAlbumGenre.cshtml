@@ -1,0 +1,29 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout - admin.cshtml";
+}
+
+<div class="panel-name col-md-8 ms-sm-auto col-lg-9 col-xl-10 bg-dark border-bottom border-primary mx-0 pt-3 pb-2 px-3 mb-3">
+    <h5 class="text-gray">Albumy / @ViewBag.Album</h5>
+</div>
+
+<div class="col-md-8 ms-sm-auto col-lg-9 col-xl-10 mt-1 barlow">
+    <div class="row px-3 pb-3">
+        <div class="col-lg-6 col-12 m-0 p-3">
+            <div class="bg-dark text-gray p-4">
+                <p class="sidebar-heading m-0 pt-0 px-2 pb-3">dodaj gatunek</p>
+                @using (Html.BeginForm("AddAlbumGenre", "Admin", new { id = ViewBag.AlbumID }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    <form>
+                        <div class="mb-3">
+                            <label for="inputName" class="form-label">Gatunek</label>
+                            @Html.DropDownList("selectedValue", (SelectList)ViewBag.List, "Wybierz gatunek", new { @class = "form-select form-style", required = "required" })
+                            @Html.ValidationMessage("EmptyField", "", new { @class = "text-danger small" })
+                        </div>
+                        <button type="submit" class="btn btn-primary">Dodaj</button>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,348 @@
+﻿@model MusicDB.Models.Album
+
+<section class="p-0 m-0 bgcolor text-light w-100">
+    <div class="container px-3 pt-5">
+        <div class="pb-2">
+            <h1 class="lead mx-2">
+                @foreach (var artist in Model.Artists)
+                {
+                    @Html.ActionLink(artist.Name + " ", "Artist", "Music", new { id = artist.ArtistID }, new { @class = "link-disabled text-muted" })
+                }
+            </h1>
+            <h1 class="display-5 mx-2">
+                @Html.DisplayFor(model => model.Title)
+            </h1>
+
+            <div class="row pb-5">
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="bg-dark text-light rounded mx-auto px-5 pb-5 mt-5">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-2 col-sm-12 pt-5">
+                                <div class="w-100">
+                                    <h5 class="subtitle text-white">Data wydania</h5>
+                                    <p class="text-muted mb-4 barlow">
+                                        @Html.DisplayFor(model => model.ReleaseDate)
+                                    </p>
+                                    <h5 class="subtitle text-white">Gatunek</h5>
+                                    @foreach (var genre in Model.Genres)
+                                    {
+                                        <p class="text-muted barlow m-0 p-0">
+                                            @Html.DisplayFor(model => genre.Name)
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+
+                            <div class="col-lg-6 col-md-5 col-sm-12 pt-5">
+                                <div class="w-100 text-center align-self-end">
+                                    <small class="text-muted">ocena społeczności</small>
+                                    @{
+                                        if (!(Model.Ratings.Count.Equals(0)))
+                                        {
+                                            <h1 class="lead rate-big barlow">
+                                                @{
+                                                    var average = Model.Ratings.Select(i => i.Rating1).Average();
+                                                }
+                                                @average.ToString("#.##")
+                                            </h1>
+                                        }
+                                        else
+                                        {
+                                            <h1 class="lead rate barlow">
+                                                brak ocen
+                                            </h1>
+                                        }
+                                    }
+                                </div>
+                                @if (Request.IsAuthenticated & Session["userID"] != null)
+                                {
+                                    <div class="text-center pt-3">
+                                        <small class="text-muted">twoja ocena</small>
+
+                                        @using (Html.BeginForm("Rating", "Music", FormMethod.Post))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.HiddenFor(model => model.AlbumID)
+
+                                            if (ViewBag.Rate == null)
+                                            {
+                                                <form>
+                                                    <div class="rating pb-2">
+                                                        <input type="radio" name="rating" value="5" id="5"><label for="5">&#9734</label>
+                                                        <input type="radio" name="rating" value="4" id="4"><label for="4">&#9734</label>
+                                                        <input type="radio" name="rating" value="3" id="3"><label for="3">&#9734</label>
+                                                        <input type="radio" name="rating" value="2" id="2"><label for="2">&#9734</label>
+                                                        <input type="radio" name="rating" value="1" id="1"><label for="1">&#9734</label>
+                                                    </div>
+
+                                                    <button type="submit" name="submitButton" value="AddRate" class="btn btn-secondary2 barlow">Zapisz</button>
+                                                </form>
+                                            }
+                                            else
+                                            {
+                                                <form>
+                                                    <div class="rating pb-2">
+                                                        <input type="radio" name="rating" value="5" id="5" @(ViewBag.Rate == 5 ? "checked" : "")><label for="5">☆</label>
+                                                        <input type="radio" name="rating" value="4" id="4" @(ViewBag.Rate == 4 ? "checked" : "")><label for="4">☆</label>
+                                                        <input type="radio" name="rating" value="3" id="3" @(ViewBag.Rate == 3 ? "checked" : "")><label for="3">☆</label>
+                                                        <input type="radio" name="rating" value="2" id="2" @(ViewBag.Rate == 2 ? "checked" : "")><label for="2">☆</label>
+                                                        <input type="radio" name="rating" value="1" id="1" @(ViewBag.Rate == 1 ? "checked" : "")><label for="1">☆</label>
+                                                    </div>
+
+                                                    <button type="submit" name="submitButton" value="EditRate" class="btn btn-secondary2 barlow">Edytuj</button>
+                                                    <button type="submit" name="submitButton" value="DeleteRate" class="btn btn-secondary2 barlow">Usuń</button>
+                                                </form>
+                                            }
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center pt-3">
+                                        <small class="text-muted">
+                                            @Html.ActionLink("Zaloguj się,", "Login", "Users", new { area = "" }, new { @class = "text-light link-disabled" })
+                                            aby dodać ocenę.
+                                        </small>
+                                    </div>
+                                }
+                            </div>
+
+                            <div class="col-lg-3 col-md-5 col-sm-12 pt-5">
+                                @{
+                                    if (Model.Cover != null)
+                                    {
+                                        var base64 = Convert.ToBase64String(Model.Cover);
+                                        var cover = string.Format("data:image/jpeg;base64,{0}", base64);
+                                        <img src="@cover" alt="album" width="100%">
+                                    }
+                                    else
+                                    {
+                                        <img src="~/img/album.png" alt="album" width="100%">
+                                    }
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-12 col-md-12 col-sm-12">
+                    <div class="text-light rounded mx-auto p-5">
+                        <p class="subtitle pb-3">Lista utworów</p>
+                        <table class="table table-dark barlow">
+                            <tbody>
+                                @foreach (var track in Model.Tracks.OrderBy(i => i.Number))
+                                {
+                                    <tr>
+                                        <td class="col-1">
+                                            @Html.DisplayFor(model => track.Number)
+                                        </td>
+                                        <td class="col-7 text-muted">
+                                            <b>
+                                                @Html.DisplayFor(model => track.Title)
+                                            </b>
+                                        </td>
+                                        <td class="col-1 text-end">
+                                            @Html.DisplayFor(model => track.Length)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="text-light rounded mx-auto pb-5 ">
+                    <p class="mx-2 lead barlow">Recenzje (@Model.Reviews.Count)</p>
+
+                    @{
+                        if (!(Model.Reviews.Count.Equals(0)))
+                        {
+                            <div id="carouselExampleControls" class="carousel slide pt-3" data-bs-interval="false">
+                                <div class="carousel-inner">
+                                    @foreach (var review in Model.Reviews.Select((item, index) => new { item, index }))
+                                    {
+                                        <div class='@(review.index == 0 ? "carousel-item active bg-dark rounded review" : "carousel-item bg-dark rounded review")'>
+                                            <div class="row">
+                                                <div class="col-12 text-center pb-4">
+                                                    @{
+                                                        if (review.item.User.Avatar != null)
+                                                        {
+                                                            var base64 = Convert.ToBase64String(review.item.User.Avatar);
+                                                            var avatar = string.Format("data:image/jpeg;base64,{0}", base64);
+                                                            <img class="rounded-circle border border-2" src="@avatar" alt="" width="75">
+                                                        }
+                                                        else
+                                                        {
+                                                            <img class="rounded-circle border border-2" src="~/img/user.png" alt="" width="75">
+                                                        }
+                                                    }
+                                                </div>
+                                                <div class="col-12">
+                                                    <figure>
+                                                        <blockquote class="blockquote">
+                                                            <p>
+                                                                <i class="fa fa-quote-left text-black ps-3 pe-2" aria-hidden="true"></i>
+                                                                @Html.DisplayFor(model => review.item.Review1)
+                                                            </p>
+                                                        </blockquote>
+                                                        <figcaption class="blockquote-footer">
+                                                            @Html.ActionLink(review.item.User.Name, "Account", "Users", new { id = review.item.UserID }, new { @class = "link-disabled" })
+                                                        </figcaption>
+                                                    </figure>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                                <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </a>
+                                <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </a>
+                            </div>
+                        }
+                    }
+
+                    @if (Request.IsAuthenticated & Session["userID"] != null)
+                    {
+                        var review = Model.Reviews.Where(s => s.UserID == Int32.Parse(Session["userID"].ToString())).FirstOrDefault();
+                        if (review == null)
+                        {
+                            <div class="text-end pt-3">
+                                @using (Html.BeginForm("Reviews", "Music", FormMethod.Post))
+                                {
+                                    @Html.AntiForgeryToken()
+                                    @Html.HiddenFor(model => model.AlbumID)
+
+                                    <form>
+                                        <div class="form-group">
+                                            <textarea name="text" class="form-control bg-dark border-dark text-light barlow" id="reviewTextarea" rows="3" placeholder="Wpisz swoją recenzję..." required></textarea>
+                                        </div>
+                                        <button type="submit" class="btn btn-secondary2 mt-2 barlow">Dodaj</button>
+                                    </form>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center pt-3">
+                                Możesz dodać tylko jedną recenzję. 
+                            </div>
+                        }
+
+                    }
+                    else
+                    {
+                        <div class="text-center pt-3">
+                            @Html.ActionLink("Zaloguj się,", "Login", "Users", new { area = "" }, new { @class = "text-muted link-disabled" })
+                            aby dodać recenzję.
+                        </div>
+                    }
+                </div>
+
+
+                <div class="text-light rounded mx-auto pb-5">
+                    <p class="mx-2 lead barlow">Komentarze (@Model.Comments.Count)</p>
+
+                    @if (Request.IsAuthenticated & Session["userID"] != null)
+                    {
+                        <div class="text-end pt-3">
+                            @using (Html.BeginForm("Comments", "Music", FormMethod.Post))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.HiddenFor(model => model.AlbumID)
+
+                                <form>
+                                    <div class="form-group">
+                                        <textarea name="text" class="form-control bg-dark border-dark text-light barlow" id="commentTextarea" rows="3" placeholder="Wpisz swój komentarz..." required></textarea>
+                                    </div>
+                                    <button type="submit" id="btnSubmit" class="btn btn-secondary2 mt-2 barlow">Dodaj</button>
+                                </form>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center pt-3">
+                            @Html.ActionLink("Zaloguj się,", "Login", "Users", new { area = "" }, new { @class = "text-muted link-disabled" })
+                            aby dodać komentarz.
+                        </div>
+                    }
+
+
+                    <table id="comments" width="100%">
+                        <thead>
+                            <tr>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            @foreach (var comment in Model.Comments.OrderByDescending(i => i.Date))
+                            {
+                                <tr>
+                                    <td class="col-12">
+                                        <div class="row pt-5">
+                                            <div class="col-lg-1 col-md-2 col-sm-2 col-3">
+                                                @{
+                                                    if (comment.User.Avatar != null)
+                                                    {
+                                                        var base64 = Convert.ToBase64String(comment.User.Avatar);
+                                                        var avatar = string.Format("data:image/jpeg;base64,{0}", base64);
+                                                        <img class="rounded-circle border border-2" src="@avatar" alt="" width="100%">
+                                                    }
+                                                    else
+                                                    {
+                                                        <img class="rounded-circle border border-2" src="~/img/user.png" alt="" width="100%">
+                                                    }
+                                                }
+                                            </div>
+                                            <div class="col-lg-11 col-md-10 col-sm-10 col-9 border-bottom border-dark">
+                                                <p class="barlow m-0 p-0 headline1">
+                                                    <b>
+                                                        @Html.ActionLink(comment.User.Name, "Account", "Users", new { id = comment.UserID }, new { @class = "link-disabled" })
+                                                    </b>
+                                                </p>
+                                                <p class="barlow m-0 p-0 headline2 text-muted">
+                                                    @Html.DisplayFor(model => comment.Date)
+                                                </p>
+                                                <p class="barlow m-0 p-0 pb-3">
+                                                    @Html.DisplayFor(model => comment.Comment1)
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script>
+        $('#comments').DataTable({
+            "sDom": 'lrtip',
+            "ordering": false,
+            "oLanguage": {
+                "sSearch": "",
+                "sEmptyTable": "Brak komentarzy.",
+                "sInfo": "",
+                "sLengthMenu": "",
+                "oPaginate": {
+                    "sFirst": "Pierwsza strona",
+                    "sPrevious": "<",
+                    "sNext": ">",
+                    "sLast": "Ostatnia strona"
+                }
+            }
+        });
+    </script>
+}
